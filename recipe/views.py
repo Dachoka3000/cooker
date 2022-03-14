@@ -36,8 +36,19 @@ def recipe_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def recipe_detail(request, pk):
-    try: 
-        recipe = Recipe.objects.get(pk=pk) 
-    except Recipe.DoesNotExist: 
-        return JsonResponse({'message': 'The recipe was not found'}, status=status.HTTP_404_NOT_FOUND) 
- 
+    try:
+        recipe = Recipe.objects.get(pk=pk)
+    except Recipe.DoesNotExist:
+        return JsonResponse({'message': 'The recipe was not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        recipe_serializer = RecipeSerializer(recipe)
+        return JsonResponse(recipe_serializer.data)
+    elif request.method == 'PUT':
+        recipe_data = JSONParser().parse(request)
+        recipe_serializer = RecipeSerializer(recipe, data=recipe_data)
+        if recipe_serializer.is_valid():
+            recipe_serializer.save()
+            return JsonResponse(recipe_serializer.data)
+        return JsonResponse(recipe_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
