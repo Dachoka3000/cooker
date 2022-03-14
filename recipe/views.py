@@ -51,4 +51,9 @@ def recipe_detail(request, pk):
             recipe_serializer.save()
             return JsonResponse(recipe_serializer.data)
         return JsonResponse(recipe_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        recipe.delete()
+        return JsonResponse({'message': 'The recipe was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+
 
