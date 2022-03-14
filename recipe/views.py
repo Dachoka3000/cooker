@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser 
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 from rest_framework.decorators import api_view
 
@@ -32,3 +32,12 @@ def recipe_list(request):
     elif request.method == 'DELETE':
         count = Recipe.objects.all().delete()
         return JsonResponse({'message': '{} Recipes were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def recipe_detail(request, pk):
+    try: 
+        recipe = Recipe.objects.get(pk=pk) 
+    except Recipe.DoesNotExist: 
+        return JsonResponse({'message': 'The recipe was not found'}, status=status.HTTP_404_NOT_FOUND) 
+ 
